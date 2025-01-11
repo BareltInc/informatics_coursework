@@ -1,24 +1,33 @@
-import requests, random
+# import requests, random
 # from bs4 import BeautifulSoup
 from telebot import *
 
 token = '7398398254:AAFa27_AjW45tXGjZbXSlMou8YH0cnsAx8I'
 bot = telebot.TeleBot(token)
+user_data = {}
+
 
 # Сообщение
 @bot.message_handler(commands=['start'])
 def welcome_message(message):
     print(message.from_user.first_name)
     print(message.chat.id)
-    welcome_message = f'Здравствуйте, {message.from_user.first_name}! Приветствуем вас на платформе для обучения сотрудников в сфере онлайн-продаж'
+    welcome_message = (f'Здравствуйте, {message.from_user.first_name}! \n'
+                       f'Приветствуем вас на платформе для обучения сотрудников в сфере онлайн-продаж')
     start_button_keyboard = types.InlineKeyboardMarkup()
     start_button = types.InlineKeyboardButton('Начать', callback_data='start')
     start_button_keyboard.add(start_button)
     bot.send_message(message.chat.id, welcome_message, reply_markup=start_button_keyboard)
 
-# @bot.message_handler(content_types='text')
-# def registration(message):
-#     bot.send_message(message.chat.id, f'You wrote {message.text}')
+def registration(message):
+    user_id = message.from_user.id
+    user_name = message.text
+    user_data[user_id] = user_name
+    continue_keyboard = types.InlineKeyboardMarkup()
+    continue_button = types.InlineKeyboardButton('Продолжить', callback_data='main')
+    continue_keyboard.add(continue_button)
+    bot.send_message(message.chat.id, f'Приятно познакомиться, {user_name}!', reply_markup=continue_keyboard)
+    print(user_data)
 
 @bot.callback_query_handler(func = lambda call: True)
 def answer(call):
@@ -27,16 +36,7 @@ def answer(call):
     match option:
         case 'start':
             bot.send_message(umessage.chat.id, text='Введите своё имя и фамилию')
-
-            @bot.message_handler(content_types='text')
-            def registration(message):
-                user = message.text
-                bot.send_message(message.chat.id, user)
-                print(user)
-                return user
-
-            bot.register_message_handler(umessage, registration(umessage))
-
+            bot.register_next_step_handler(umessage, registration)
 
         case 'main':
             choose_topic = types.InlineKeyboardMarkup()
@@ -45,17 +45,24 @@ def answer(call):
             progress_b = types.InlineKeyboardButton("Прогресс", callback_data='progress')
             choose_topic.row_width = 1
             choose_topic.add(account_b, theme_b, progress_b)
-            bot.send_message(umessage.chat.id, text='Курс "Эффективные продажи в онлайн-магазине"',
-                             reply_markup=choose_topic)
+            message_id = bot.send_message(umessage.chat.id, 'Курс "Эффективные продажи в онлайн-магазине"', reply_markup=choose_topic).message_id
+            print(message_id)
+            bot.delete_message(umessage.chat.id, message_id - 1)
+
         case 'account':
-            account_message = (f'*** Ваше имя и фамилия *** \n'
+            chatid = umessage.chat.id
+            username = user_data[chatid]
+            account_message = (f'{username} \n'
                                f'\n'
                                f'Курсы:\n'
                                f'"Эффективные продажи в онлайн-магазине"')
             account_keyboard = types.InlineKeyboardMarkup()
             account_button = types.InlineKeyboardButton('Назад', callback_data='main')
             account_keyboard.add(account_button)
-            bot.send_message(umessage.chat.id, account_message, reply_markup=account_keyboard)
+            message_id = bot.send_message(umessage.chat.id, account_message, reply_markup=account_keyboard).message_id
+            print(message_id)
+            bot.delete_message(umessage.chat.id, message_id - 1)
+
         case 'course':
             themes_list = types.InlineKeyboardMarkup()
             themes_list.row_width = 1
@@ -65,7 +72,57 @@ def answer(call):
             theme4 = types.InlineKeyboardButton('4 | Завершение сделки и постпродажное обслуживание', callback_data='theme4')
             goback = types.InlineKeyboardButton('Выйти', callback_data='main')
             themes_list.add(theme1, theme2, theme3, theme4, goback)
-            bot.send_message(umessage.chat.id, 'Выберите тему:', reply_markup=themes_list)
+            message_id = bot.send_message(umessage.chat.id, 'Выберите тему:', reply_markup=themes_list).message_id
+            print(message_id)
+            bot.delete_message(umessage.chat.id, message_id-1)
+
+        case 'theme1':
+            themes_list = types.InlineKeyboardMarkup()
+            themes_list.row_width = 1
+            theme_a = types.InlineKeyboardButton('Особенности онлайн-продаж и их отличие от офлайн-продаж', callback_data='theme1a')
+            theme_b = types.InlineKeyboardButton('Основные понятия: конверсия, средний чек, лиды', callback_data='theme1b')
+            theme_c = types.InlineKeyboardButton('Роль менеджера по продажам в онлайн-магазине', callback_data='theme1c')
+            goback = types.InlineKeyboardButton('Назад', callback_data='course')
+            themes_list.add(theme_a, theme_b, theme_c, goback)
+            message_id = bot.send_message(umessage.chat.id, 'Выберите урок:', reply_markup=themes_list).message_id
+            print(message_id)
+            bot.delete_message(umessage.chat.id, message_id - 1)
+
+        case 'theme2':
+            themes_list = types.InlineKeyboardMarkup()
+            themes_list.row_width = 1
+            theme_a = types.InlineKeyboardButton('Техники установления контакта с клиентом в чате', callback_data='theme2a')
+            theme_b = types.InlineKeyboardButton('Выявление потребностей и мотивации покупателя', callback_data='theme2b')
+            theme_c = types.InlineKeyboardButton('Активное слушание и умение задавать вопросы.', callback_data='theme2c')
+            goback = types.InlineKeyboardButton('Назад', callback_data='course')
+            themes_list.add(theme_a, theme_b, theme_c, goback)
+            message_id = bot.send_message(umessage.chat.id, 'Выберите урок:', reply_markup=themes_list).message_id
+            print(message_id)
+            bot.delete_message(umessage.chat.id, message_id - 1)
+
+        case 'theme3':
+            themes_list = types.InlineKeyboardMarkup()
+            themes_list.row_width = 1
+            theme_a = types.InlineKeyboardButton('Как эффективно презентовать товар онлайн', callback_data='theme3a')
+            theme_b = types.InlineKeyboardButton('Описание преимуществ и выгод для клиента', callback_data='theme3b')
+            theme_c = types.InlineKeyboardButton('Работа с распространенными возражениями клиентов', callback_data='theme3c')
+            goback = types.InlineKeyboardButton('Назад', callback_data='course')
+            themes_list.add(theme_a, theme_b, theme_c, goback)
+            message_id = bot.send_message(umessage.chat.id, 'Выберите урок:', reply_markup=themes_list).message_id
+            print(message_id)
+            bot.delete_message(umessage.chat.id, message_id - 1)
+
+        case 'theme4':
+            themes_list = types.InlineKeyboardMarkup()
+            themes_list.row_width = 1
+            theme_a = types.InlineKeyboardButton('Техники завершения сделки', callback_data='theme4a')
+            theme_b = types.InlineKeyboardButton('Сопровождение клиента после покупки', callback_data='theme4b')
+            theme_c = types.InlineKeyboardButton('Сбор обратной связи и повышение лояльности', callback_data='theme4c')
+            goback = types.InlineKeyboardButton('Назад', callback_data='course')
+            themes_list.add(theme_a, theme_b, theme_c, goback)
+            message_id = bot.send_message(umessage.chat.id, 'Выберите урок:', reply_markup=themes_list).message_id
+            print(message_id)
+            bot.delete_message(umessage.chat.id, message_id - 1)
 
         case 'progress':
             completed_lessons = 2
@@ -78,8 +135,9 @@ def answer(call):
             progress_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Назад', callback_data='main')
             progress_keyboard.add(goback)
-            bot.send_message(umessage.chat.id, progress_message, reply_markup=progress_keyboard)
-
+            message_id = bot.send_message(umessage.chat.id, progress_message, reply_markup=progress_keyboard).message_id
+            print(message_id)
+            bot.delete_message(umessage.chat.id, message_id - 1)
 
 # Кнопка
 @bot.message_handler(commands=['button'])
