@@ -7,8 +7,6 @@ bot = telebot.TeleBot(token)
 user_data = {}
 progress_data = {}
 
-
-# Сообщение
 @bot.message_handler(commands=['start'])
 def welcome_message(message):
     print(message.from_user.first_name)
@@ -24,16 +22,19 @@ def registration(message):
     user_id = message.chat.id
     user_name = message.text
     user_data[user_id] = user_name
-    progress_data[user_id] = 0
+    progress_data[user_id] = []
     continue_keyboard = types.InlineKeyboardMarkup()
     continue_button = types.InlineKeyboardButton('Продолжить', callback_data='main')
     continue_keyboard.add(continue_button)
     bot.send_message(message.chat.id, f'Приятно познакомиться, {user_name}!', reply_markup=continue_keyboard)
     print(user_data)
 
-def progress_plus(message):
+def progress_plus(message, theme):
     user_id = message.chat.id
-    progress_data[user_id] = progress_data[user_id] + 1
+    completed_themes = progress_data[user_id]
+    completed_themes.append(theme)
+    progress_data[user_id] = list(set(completed_themes))
+    print(progress_data)
 
 @bot.callback_query_handler(func = lambda call: True)
 def answer(call):
@@ -131,175 +132,224 @@ def answer(call):
             bot.delete_message(umessage.chat.id, message_id - 1)
 
         case 'theme1a':
-            text = ('Добро пожаловать в мир онлайн-продаж! '
-                    'Этот раздел поможет вам понять ключевые отличия онлайн-продаж от традиционных офлайн-магазинов. '
-                    'Главное отличие — это скорость и доступность: покупатели могут совершать покупки в любое время и в любом месте. '
-                    'Также важна персонализация: мы можем настраивать предложения под конкретного клиента. '
-                    'Но, в отличие от офлайна, нет личного контакта. Поэтому, нужно уметь создавать его онлайн.')
+            text = ('Добро пожаловать в увлекательный мир онлайн-продаж! '
+                    'Этот раздел заложит фундамент вашего понимания специфики этого канала. '
+                    'В отличие от традиционных офлайн-магазинов, где взаимодействие происходит лицом к лицу, онлайн-продажи полагаются на цифровые инструменты и коммуникацию. '
+                    'Главное преимущество — это скорость и доступность: клиенты могут совершать покупки в любое время дня и ночи, из любой точки мира, имея лишь доступ к интернету. '
+                    'Также важна персонализация: онлайн позволяет собирать данные о клиентах и настраивать предложения под их конкретные потребности и предпочтения. '
+                    'Это может быть история покупок, поисковые запросы или поведение на сайте. '
+                    'Но, в отличие от офлайна, здесь нет прямого физического контакта. '
+                    'Поэтому, мы должны уметь создавать доверительную атмосферу и эффективно общаться с клиентами в цифровом формате, используя текстовые сообщения, чаты, электронную почту и другие средства связи.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme1')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_1a')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_1a':
+            progress_plus(umessage, '1a')
 
         case 'theme1b':
-            text = ('Давайте разберемся с ключевыми понятиями: \n'
-                    'Конверсия - это процент посетителей, которые совершают покупку. \n'
-                    'Средний чек - это сумма, которую в среднем тратит один покупатель. \n'
-                    'Лид - это потенциальный клиент, проявивший интерес к вашему товару. \n')
+            text = ('Давайте разберемся с основными понятиями, которые помогут нам измерять эффективность наших усилий. \n'
+                    'Конверсия — это процент посетителей вашего сайта или страницы, которые совершают целевое действие, чаще всего, покупку. '
+                    'Выражается в процентах и показывает, насколько хорошо ваш сайт или контент мотивирует клиентов к покупке. '
+                    ''
+                    'Средний чек — это средняя сумма, которую тратит один покупатель в вашем магазине за одну покупку. '
+                    'Это важный показатель, влияющий на общую выручку магазина. '
+                    ''
+                    'Лид — это потенциальный клиент, который проявил интерес к вашему продукту или услуге, например, оставил свой контактный номер или email. '
+                    'Важно понимать, что лид — это ещё не покупатель, но он демонстрирует готовность к взаимодействию, и его нужно умело «вести» к покупке.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme1')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_1b')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_1b':
+            progress_plus(umessage, '1b')
 
         case 'theme1c':
-            text = ('Менеджер по продажам в онлайн-магазине — это ключевая фигура. '
-                    'Он не только продает, но и создает позитивный опыт для клиента. '
-                    'Он должен уметь общаться, выявлять потребности и решать проблемы. '
-                    'Он является лицом компании в онлайне.')
+            text = ('Роль менеджера по продажам в онлайн-магазине выходит за рамки простого приема заказов. '
+                    'Вы - ключевая фигура, которая формирует восприятие компании в цифровом пространстве. '
+                    'Ваша работа включает не только помощь в выборе товара и оформление заказа, но и создание позитивного опыта для каждого клиента. '
+                    'Вы должны быть не только отличными продавцами, но и экспертами в товаре, а также консультантами, способными понять потребности клиента и предложить наилучшее решение. '
+                    'Важны коммуникабельность, эмпатия, умение быстро реагировать на запросы, а также техническая грамотность, поскольку вся работа происходит в цифровой среде. '
+                    'Вы — лицо компании в онлайн-пространстве, и именно от вас зависит, вернется ли клиент к нам снова.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme1')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_1c')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_1c':
+            progress_plus(umessage, '1c')
 
         case 'theme2a':
-            text = ('Успешное начало диалога — залог успешной продажи. '
-                    'Приветствие должно быть вежливым, быстрым и персонализированным. \n'
-                    'Примеры приветствий: \n'
-                    ' - Добрый день! Рады видеть вас в нашем магазине. Чем могу помочь?\n'
-                    ' - Здравствуйте, (имя клиента)! Что вас интересует сегодня?\n'
-                    ' - Приветствуем! Если у вас возникли вопросы, не стесняйтесь спрашивать.')
+            text = ('Успешное установление контакта — это фундамент для продуктивного диалога и успешной продажи. '
+                    'Первое сообщение должно быть вежливым, быстрым и персонализированным, насколько это возможно. '
+                    'Забудьте про шаблонные фразы; старайтесь обращаться к клиенту по имени, если это возможно, и покажите, что вы готовы помочь. '
+                    'Внимательно следите за временем ответа; долгие задержки могут отпугнуть клиента. '
+                    'Используйте приветственные фразы, которые создают позитивный настрой и показывают вашу готовность к диалогу. '
+                    'Проявите искренний интерес к запросу клиента, чтобы он почувствовал вашу заботу и вовлеченность. '
+                    'Начните разговор с открытого вопроса, который поможет клиенту описать свою потребность.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme2')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_2a')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_2a':
+            progress_plus(umessage, '2a')
 
         case 'theme2b':
-            text = ('Чтобы предложить клиенту то, что ему нужно, необходимо правильно выявить его потребности. '
-                    'Задавайте открытые вопросы, внимательно слушайте ответы. \n'
-                    'Список открытых вопросов: \n'
-                    ' - Какую проблему вы хотите решить с помощью нашего продукта? \n'
-                    ' - Какие характеристики товара для вас наиболее важны? \n'
-                    ' - Какой у вас бюджет? \n'
-                    ' - Что вам особенно понравилось в нашем магазине? \n'
-                    ' - Что вас заставляет искать этот товар?')
+            text = ('Чтобы предложить клиенту именно то, что ему нужно, необходимо научиться правильно выявлять его потребности и мотивацию. '
+                    'Задавайте открытые вопросы, требующие развернутого ответа, а не просто «да» или «нет». '
+                    'Внимательно слушайте ответы, обращайте внимание на детали и ключевые слова, которые помогут вам понять истинные намерения клиента. '
+                    'Постарайтесь понять, какую проблему клиент хочет решить с помощью вашего продукта или услуги, какие характеристики и качества для него наиболее важны. '
+                    'Используйте технику «5 почему», если это необходимо, чтобы добраться до самой сути проблемы. '
+                    'Важно понять не только, что клиент хочет, но и почему он этого хочет, что его мотивирует к покупке.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme2')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_2b')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_2b':
+            progress_plus(umessage, '2b')
 
         case 'theme2c':
-            text = ('Активное слушание — это умение не только слышать, но и понимать клиента. '
-                    'Перефразируйте его слова, задавайте уточняющие вопросы')
+            text = ('Активное слушание — это не просто молчание во время разговора, а сознательное усилие понять собеседника. '
+                    'Оно заключается в том, чтобы внимательно слушать, что говорит клиент, не перебивая, и показывать, что вы вовлечены в разговор. '
+                    'Перефразируйте слова клиента, чтобы убедиться, что вы правильно его поняли, и задавайте уточняющие вопросы, чтобы получить более точную информацию. '
+                    'Используйте эмпатию, чтобы показать клиенту, что вы понимаете его чувства и переживания. '
+                    'Активное слушание и правильные вопросы не только помогут вам получить необходимую информацию, но и помогут клиенту почувствовать себя ценным и важным, что увеличит его лояльность и готовность к покупке.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme2')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_2c')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_2c':
+            progress_plus(umessage, '2c')
 
         case 'theme3a':
-            text = ('Презентация товара в онлайне должна быть привлекательной и информативной. '
-                    'Используйте качественные фото, видео, подробные описания')
+            text = ('Презентация товара в онлайн-магазине должна быть максимально привлекательной и информативной. '
+                    'Используйте качественные фотографии и видео, которые показывают товар с разных ракурсов и в разных ситуациях использования. '
+                    'Подробное и точное описание характеристик и особенностей товара — обязательное условие. '
+                    'Выделите ключевые преимущества и покажите, как они могут решить проблемы клиента или улучшить его жизнь. '
+                    'Не забудьте про призыв к действию, например, "Добавить в корзину", "Купить сейчас" или "Узнать больше". '
+                    'Важно не просто перечислить характеристики, а показать выгоды для клиента, используя эмоциональные описания, которые вызывают интерес и желание приобрести товар. '
+                    'Создайте такое впечатление, что товар уже находится в руках у клиента.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme3')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_3a')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_3a':
+            progress_plus(umessage, '3a')
 
         case 'theme3b':
-            text = ('Не просто говорите о характеристиках товара, покажите, какие выгоды получит клиент. '
-                    'Например: Этот телефон имеет мощную батарею, что позволит вам целый день не думать о зарядке.')
+            text = ('Ключ к успешной презентации — это умение трансформировать характеристики товара в конкретные выгоды для клиента. '
+                    'Не зацикливайтесь на технических деталях, покажите, как эти детали улучшают жизнь клиента. '
+                    'Например, если у телефона есть мощный аккумулятор, не просто скажите, что он "мощный", а объясните, что это означает, что клиенту не придется постоянно беспокоиться о зарядке в течение дня. '
+                    'Используйте язык выгод, который понятен и близок клиенту. '
+                    'Старайтесь понять, что именно для него важно, и подчеркивайте именно эти аспекты. '
+                    'Не забывайте, что клиенты покупают не товары, а решения своих проблем и удовлетворение своих потребностей.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme3')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_3b')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_3b':
+            progress_plus(umessage, '3b')
 
         case 'theme3c':
-            text = ('Возражения — это нормально. '
-                    'Они показывают, что клиент заинтересован. '
-                    'Ваша задача — правильно отработать их.')
+            text = ('Возражения клиентов — это неотъемлемая часть процесса продаж. '
+                    'Не стоит их бояться, скорее, наоборот, рассматривать как возможность убедить клиента в ценности вашего товара и отработать его сомнения. '
+                    'Типичные возражения, такие как «дорого» или «я подумаю», должны быть отработаны с уверенностью и профессионализмом. '
+                    'Вместо того, чтобы спорить с клиентом, используйте эмпатию, чтобы понять его точку зрения. '
+                    'Предлагайте альтернативные варианты, если цена вызывает вопросы, или дайте клиенту время подумать, но обязательно предложите вашу помощь в случае возникновения вопросов. '
+                    'Главное — оставаться позитивным и уверенным, не теряя настойчивости.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme3')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_3c')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_3c':
+            progress_plus(umessage, '3c')
 
         case 'theme4a':
-            text = ('Не бойтесь завершать сделку. Используйте техники, чтобы мягко подтолкнуть клиента к покупке. \n'
-                    'Описание техник: \n'
-                    'Альтернативный выбор: "Вы хотели бы заказать в синем или красном цвете?" \n'
-                    'Резюме: "Итак, мы обсудили все детали, вы выбрали этот товар. Могу ли я оформить заказ?" \n'
-                    'Ограниченное предложение: "Только сегодня действует скидка 10% на этот товар." \n')
+            text = ('Завершение сделки — это момент, когда вы мягко, но уверенно подталкиваете клиента к покупке. '
+                    'Используйте техники, которые помогут вам перейти от диалога к действию. \n'
+                    'Техника "альтернативный выбор" — это предложение клиенту выбора между несколькими вариантами товара, что помогает принять решение. \n'
+                    'Техника "резюме" — это краткое повторение всех преимуществ и выгод выбранного товара, чтобы клиент еще раз убедился в своем выборе. \n'
+                    'Техника "ограниченное предложение" — это создание срочности, например, через скидки или акции, которые действуют только ограниченное время. \n'
+                    'Важно не давить на клиента, а мягко подвести его к завершению сделки, показав, что вы готовы помочь ему сделать правильный выбор.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme4')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_4a')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_4a':
+            progress_plus(umessage, '4a')
 
         case 'theme4b':
-            text = ('Не забывайте о клиенте после покупки. Поддерживайте связь, спрашивайте о впечатлениях, предлагайте помощь. \n'
-                    'Шаблоны сообщений: \n'
-                    ' - Спасибо за покупку! Если у вас возникнут вопросы, не стесняйтесь обращаться. \n'
-                    ' - Надеемся, вам понравится товар! Мы будем рады, если вы оставите отзыв.')
+            text = ('Сопровождение клиента после покупки — это не менее важный этап, чем сама продажа. '
+                    'Не забывайте о клиенте после того, как он совершил покупку. '
+                    'Отправьте ему благодарственное письмо или сообщение, предложите свою помощь в случае возникновения вопросов или проблем. '
+                    'Поддерживайте связь с клиентом, узнавайте его впечатления от товара, предлагайте специальные условия для повторных покупок. '
+                    'Положительный опыт после покупки повышает лояльность клиентов и увеличивает вероятность того, что он вернется к вам снова и посоветует ваш магазин своим друзьям. '
+                    'Важно показать клиенту, что вы цените его доверие и готовы поддержать его на всех этапах взаимодействия.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme4')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_4b')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
+        case 'progress_plus_4b':
+            progress_plus(umessage, '4b')
 
         case 'theme4c':
-            text = ('Обратная связь помогает нам стать лучше. Просите клиентов оставлять отзывы, прислушивайтесь к их мнению. \n'
-                    'Методы сбора обратной связи: \n'
-                    'Опросы после покупки \n'
-                    'Формы для обратной связи на сайте \n'
-                    'Общение в чате \n')
+            text = ('Сбор обратной связи — это не просто возможность услышать мнение клиентов, но и мощный инструмент для улучшения вашей работы. '
+                    'Предлагайте клиентам оставлять отзывы о товарах и о качестве обслуживания. '
+                    'Прислушивайтесь к их мнению, анализируйте их замечания и используйте эту информацию для оптимизации процессов. '
+                    'Важно не только собирать обратную связь, но и активно реагировать на нее, отвечая на вопросы и решая проблемы клиентов. '
+                    'Своевременная реакция на обратную связь показывает, что вы заботитесь о клиентах и делаете все возможное, чтобы обеспечить их удовлетворенность. '
+                    'Это один из лучших способов повысить лояльность клиентов и построить с ними долгосрочные отношения.')
             goback_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme4')
-            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus')
+            complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_4c')
             goback_keyboard.add(goback, complete)
             message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
             print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
-
-        case 'progress_plus':
-            progress_plus(umessage)
+        case 'progress_plus_4c':
+            progress_plus(umessage, '4c')
 
         case 'progress':
             progress_id = umessage.chat.id
             completed_lessons = progress_data[progress_id]
-            persents = round(completed_lessons/12, 2)*100
+            persents = round(len(completed_lessons)/12, 2)*100
             progress_message = (f'Ваш прогресс\n'
                                f'\n'
                                f'Курсы:\n'
                                f'"Эффективные продажи в онлайн-магазине"\n'
-                                f'{completed_lessons}/12 ({persents}%)')
+                                f'{len(completed_lessons)}/12 ({persents}%)')
             progress_keyboard = types.InlineKeyboardMarkup()
             goback = types.InlineKeyboardButton('Назад', callback_data='main')
             progress_keyboard.add(goback)
@@ -318,14 +368,11 @@ def query_text(inline_query):
 #     pca = random.choice(html.find_all(class_='game-card'))
 #     bot.send_message(message.chat.id, pca.find(class_='name').text)
 
-
-# Завершение работы
 @bot.message_handler(commands=['end'])
 def send_welcome_message(message):
     print(message.from_user.first_name)
     print(message.chat.id)
     bb_message = f'Пока, {message.from_user.first_name}, возвращайся ещё!'
     bot.send_message(message.chat.id, bb_message)
-
 
 bot.polling()
