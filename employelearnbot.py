@@ -42,18 +42,17 @@ def answer(call):
     umessage = call.message
     match option:
         case 'start':
-            bot.send_message(umessage.chat.id, text='Введите своё имя и фамилию')
+            bot.send_message(umessage.chat.id, text='Как вас зовут')
             bot.register_next_step_handler(umessage, registration)
 
         case 'main':
             choose_topic = types.InlineKeyboardMarkup()
-            account_b = types.InlineKeyboardButton("Аккаунт", callback_data='account')
-            theme_b = types.InlineKeyboardButton("Выбор темы", callback_data='course')
-            progress_b = types.InlineKeyboardButton("Прогресс", callback_data='progress')
+            account_b = types.InlineKeyboardButton('Аккаунт', callback_data='account')
+            theme_b = types.InlineKeyboardButton('Выбор темы', callback_data='course')
+            progress_b = types.InlineKeyboardButton('Прогресс', callback_data='progress')
             choose_topic.row_width = 1
             choose_topic.add(account_b, theme_b, progress_b)
             message_id = bot.send_message(umessage.chat.id, 'Курс "Эффективные продажи в онлайн-магазине"', reply_markup=choose_topic).message_id
-            print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
 
         case 'account':
@@ -62,12 +61,11 @@ def answer(call):
             account_message = (f'{username} \n'
                                f'\n'
                                f'Курсы:\n'
-                               f'"Эффективные продажи в онлайн-магазине"')
+                               f'  "Эффективные продажи в онлайн-магазине"')
             account_keyboard = types.InlineKeyboardMarkup()
             account_button = types.InlineKeyboardButton('Назад', callback_data='main')
             account_keyboard.add(account_button)
             message_id = bot.send_message(umessage.chat.id, account_message, reply_markup=account_keyboard).message_id
-            print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
 
         case 'course':
@@ -80,7 +78,6 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='main')
             themes_list.add(theme1, theme2, theme3, theme4, goback)
             message_id = bot.send_message(umessage.chat.id, 'Выберите тему:', reply_markup=themes_list).message_id
-            print(message_id)
             bot.delete_message(umessage.chat.id, message_id-1)
 
         case 'theme1':
@@ -92,7 +89,6 @@ def answer(call):
             goback = types.InlineKeyboardButton('Назад', callback_data='course')
             themes_list.add(theme_a, theme_b, theme_c, goback)
             message_id = bot.send_message(umessage.chat.id, 'Выберите урок:', reply_markup=themes_list).message_id
-            print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
 
         case 'theme2':
@@ -104,7 +100,6 @@ def answer(call):
             goback = types.InlineKeyboardButton('Назад', callback_data='course')
             themes_list.add(theme_a, theme_b, theme_c, goback)
             message_id = bot.send_message(umessage.chat.id, 'Выберите урок:', reply_markup=themes_list).message_id
-            print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
 
         case 'theme3':
@@ -116,7 +111,6 @@ def answer(call):
             goback = types.InlineKeyboardButton('Назад', callback_data='course')
             themes_list.add(theme_a, theme_b, theme_c, goback)
             message_id = bot.send_message(umessage.chat.id, 'Выберите урок:', reply_markup=themes_list).message_id
-            print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
 
         case 'theme4':
@@ -128,10 +122,10 @@ def answer(call):
             goback = types.InlineKeyboardButton('Назад', callback_data='course')
             themes_list.add(theme_a, theme_b, theme_c, goback)
             message_id = bot.send_message(umessage.chat.id, 'Выберите урок:', reply_markup=themes_list).message_id
-            print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
 
         case 'theme1a':
+            image = open('difference.png', 'rb')
             text = ('Добро пожаловать в увлекательный мир онлайн-продаж! '
                     'Этот раздел заложит фундамент вашего понимания специфики этого канала. '
                     'В отличие от традиционных офлайн-магазинов, где взаимодействие происходит лицом к лицу, онлайн-продажи полагаются на цифровые инструменты и коммуникацию. '
@@ -144,13 +138,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme1')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_1a')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_1a':
             progress_plus(umessage, '1a')
 
         case 'theme1b':
+            image = open('', 'rb')
             text = ('Давайте разберемся с основными понятиями, которые помогут нам измерять эффективность наших усилий. \n'
                     'Конверсия — это процент посетителей вашего сайта или страницы, которые совершают целевое действие, чаще всего, покупку. '
                     'Выражается в процентах и показывает, насколько хорошо ваш сайт или контент мотивирует клиентов к покупке. '
@@ -164,13 +158,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme1')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_1b')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_1b':
             progress_plus(umessage, '1b')
 
         case 'theme1c':
+            image = open('', 'rb')
             text = ('Роль менеджера по продажам в онлайн-магазине выходит за рамки простого приема заказов. '
                     'Вы - ключевая фигура, которая формирует восприятие компании в цифровом пространстве. '
                     'Ваша работа включает не только помощь в выборе товара и оформление заказа, но и создание позитивного опыта для каждого клиента. '
@@ -181,13 +175,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme1')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_1c')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_1c':
             progress_plus(umessage, '1c')
 
         case 'theme2a':
+            image = open('', 'rb')
             text = ('Успешное установление контакта — это фундамент для продуктивного диалога и успешной продажи. '
                     'Первое сообщение должно быть вежливым, быстрым и персонализированным, насколько это возможно. '
                     'Забудьте про шаблонные фразы; старайтесь обращаться к клиенту по имени, если это возможно, и покажите, что вы готовы помочь. '
@@ -199,13 +193,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme2')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_2a')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_2a':
             progress_plus(umessage, '2a')
 
         case 'theme2b':
+            image = open('', 'rb')
             text = ('Чтобы предложить клиенту именно то, что ему нужно, необходимо научиться правильно выявлять его потребности и мотивацию. '
                     'Задавайте открытые вопросы, требующие развернутого ответа, а не просто «да» или «нет». '
                     'Внимательно слушайте ответы, обращайте внимание на детали и ключевые слова, которые помогут вам понять истинные намерения клиента. '
@@ -216,13 +210,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme2')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_2b')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_2b':
             progress_plus(umessage, '2b')
 
         case 'theme2c':
+            image = open('', 'rb')
             text = ('Активное слушание — это не просто молчание во время разговора, а сознательное усилие понять собеседника. '
                     'Оно заключается в том, чтобы внимательно слушать, что говорит клиент, не перебивая, и показывать, что вы вовлечены в разговор. '
                     'Перефразируйте слова клиента, чтобы убедиться, что вы правильно его поняли, и задавайте уточняющие вопросы, чтобы получить более точную информацию. '
@@ -232,13 +226,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme2')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_2c')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_2c':
             progress_plus(umessage, '2c')
 
         case 'theme3a':
+            image = open('', 'rb')
             text = ('Презентация товара в онлайн-магазине должна быть максимально привлекательной и информативной. '
                     'Используйте качественные фотографии и видео, которые показывают товар с разных ракурсов и в разных ситуациях использования. '
                     'Подробное и точное описание характеристик и особенностей товара — обязательное условие. '
@@ -250,13 +244,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme3')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_3a')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_3a':
             progress_plus(umessage, '3a')
 
         case 'theme3b':
+            image = open('', 'rb')
             text = ('Ключ к успешной презентации — это умение трансформировать характеристики товара в конкретные выгоды для клиента. '
                     'Не зацикливайтесь на технических деталях, покажите, как эти детали улучшают жизнь клиента. '
                     'Например, если у телефона есть мощный аккумулятор, не просто скажите, что он "мощный", а объясните, что это означает, что клиенту не придется постоянно беспокоиться о зарядке в течение дня. '
@@ -267,13 +261,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme3')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_3b')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_3b':
             progress_plus(umessage, '3b')
 
         case 'theme3c':
+            image = open('', 'rb')
             text = ('Возражения клиентов — это неотъемлемая часть процесса продаж. '
                     'Не стоит их бояться, скорее, наоборот, рассматривать как возможность убедить клиента в ценности вашего товара и отработать его сомнения. '
                     'Типичные возражения, такие как «дорого» или «я подумаю», должны быть отработаны с уверенностью и профессионализмом. '
@@ -284,13 +278,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme3')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_3c')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_3c':
             progress_plus(umessage, '3c')
 
         case 'theme4a':
+            image = open('', 'rb')
             text = ('Завершение сделки — это момент, когда вы мягко, но уверенно подталкиваете клиента к покупке. '
                     'Используйте техники, которые помогут вам перейти от диалога к действию. \n'
                     'Техника "альтернативный выбор" — это предложение клиенту выбора между несколькими вариантами товара, что помогает принять решение. \n'
@@ -301,13 +295,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme4')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_4a')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_4a':
             progress_plus(umessage, '4a')
 
         case 'theme4b':
+            image = open('', 'rb')
             text = ('Сопровождение клиента после покупки — это не менее важный этап, чем сама продажа. '
                     'Не забывайте о клиенте после того, как он совершил покупку. '
                     'Отправьте ему благодарственное письмо или сообщение, предложите свою помощь в случае возникновения вопросов или проблем. '
@@ -318,13 +312,13 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme4')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_4b')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_4b':
             progress_plus(umessage, '4b')
 
         case 'theme4c':
+            image = open('', 'rb')
             text = ('Сбор обратной связи — это не просто возможность услышать мнение клиентов, но и мощный инструмент для улучшения вашей работы. '
                     'Предлагайте клиентам оставлять отзывы о товарах и о качестве обслуживания. '
                     'Прислушивайтесь к их мнению, анализируйте их замечания и используйте эту информацию для оптимизации процессов. '
@@ -335,8 +329,7 @@ def answer(call):
             goback = types.InlineKeyboardButton('Выйти', callback_data='theme4')
             complete = types.InlineKeyboardButton('Просмотрено', callback_data='progress_plus_4c')
             goback_keyboard.add(goback, complete)
-            message_id = bot.send_message(umessage.chat.id, text, reply_markup=goback_keyboard).message_id
-            print(message_id)
+            message_id = bot.send_photo(umessage.chat.id, image, caption=text, reply_markup=goback_keyboard).message_id
             bot.delete_message(umessage.chat.id, message_id - 1)
         case 'progress_plus_4c':
             progress_plus(umessage, '4c')
@@ -354,7 +347,6 @@ def answer(call):
             goback = types.InlineKeyboardButton('Назад', callback_data='main')
             progress_keyboard.add(goback)
             message_id = bot.send_message(umessage.chat.id, progress_message, reply_markup=progress_keyboard).message_id
-            print(message_id)
             bot.delete_message(umessage.chat.id, message_id - 1)
 
 @bot.inline_handler(lambda query: query.query == 'Аккаунт')
